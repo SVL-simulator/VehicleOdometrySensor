@@ -65,6 +65,11 @@ namespace Simulator.Sensors
 
         public override void OnBridgeSetup(BridgeInstance bridge)
         {
+            if (bridge.Plugin.Factory is Bridge.Cyber.CyberBridgeFactory)
+            {
+                return;
+            }
+
             Bridge = bridge;
             Publish = bridge.AddPublisher<VehicleOdometryData>(Topic);
         }
