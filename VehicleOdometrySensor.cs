@@ -31,11 +31,10 @@ namespace Simulator.Sensors
         private BridgeInstance Bridge;
         private Publisher<VehicleOdometryData> Publish;
 
-        private Rigidbody RigidBody;
         private IVehicleDynamics Dynamics;
+        private IAgentController Controller;
         private VehicleActions Actions;
         private VehicleLane Lane;
-        private AgentController AgentController;
 
         private VehicleOdometryData msg;
 
@@ -57,9 +56,8 @@ namespace Simulator.Sensors
 
         private void Awake()
         {
-            RigidBody = GetComponentInParent<Rigidbody>();
             Dynamics = GetComponentInParent<IVehicleDynamics>();
-            AgentController = GetComponentInParent<AgentController>();
+            Controller = GetComponentInParent<IAgentController>();
             Lane = GetComponentInParent<VehicleLane>();
         }
 
@@ -87,7 +85,7 @@ namespace Simulator.Sensors
             PrevPos = transform.position;
 
             // traffic speed violation
-            float speed = RigidBody.velocity.magnitude;
+            float speed = Dynamics.Velocity.magnitude;
             if (speed > Lane?.CurrentMapLane?.speedLimit)
             {
                 SpeedViolationLane = Lane.CurrentMapLane;
@@ -98,7 +96,7 @@ namespace Simulator.Sensors
             {
                 if (SpeedViolationCount > 0 && SpeedViolationLane != null)
                 {
-                    SpeedViolationEvent(AgentController.GTID, SpeedViolationLane);
+                    SpeedViolationEvent(Controller.GTID, SpeedViolationLane);
                 }
                 SpeedViolationCount = 0f;
                 SpeedViolationMax = 0f;
